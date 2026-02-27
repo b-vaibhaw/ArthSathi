@@ -1,0 +1,81 @@
+# docker-compose.yml
+# ArthaSathi — Full Stack Deployment
+# Start: docker-compose up -d
+# Stop:  docker-compose down
+
+version: "3.9"
+
+services:
+
+  # ── ArthaSathi API ──────────────────────────────────────────
+  arthasathi:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    image: arthasathi:latest
+    container_name: arthasathi_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../models:/app/checkpoints:ro            # Model weights (read-only)
+      - ../arthasathi_tokenizer:/app/arthasathi_tokenizer:ro
+      - ../rag_index:/app/rag_index:rw            # FAISS index
+      - arthasathi_data:/app/data                 # User database
+      - arthasathi_logs:/app/logs
+    environment:
+      - MODEL_PATH=/app/checkpoints/finetune/final_ft.pt
+      - TOKENIZER_DIR=/app/arthasathi_tokenizer
+      - RAG_INDEX_PATH=/app/rag_index
+      - DB_PATH=/app/data/arthasathi_users.db
+      - DEVICE=cuda
+      - WA_PHONE_ID=${WA_PHONE_ID}
+      - WA_ACCESS_TOKEN=${WA_ACCESS_TOKEN}
+      - WA_VERIFY_TOKEN=${WA_VERIFY_TOKEN}
+      - TWILIO_SID=${TWILIO_SID}
+      - TWILIO_TOKEN=${TWILIO_TOKEN}
+      - TWILIO_NUMBER=${TWILIO_NUMBER}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+
+  # ── Nginx Reverse Proxy ─────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: arthasathi_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro        # SSL certificates
+    depends_on:
+      arthasathi:
+        condition: service_healthy
+
+  # ── Redis (session cache + rate limiting) ───────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: arthasathi_redis
+    restart: unless-stopped
+    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
+    ports:
+      - "127.0.0.1:6379:6379"   # Only expose to localhost
+    volumes:
+      - redis_data:/data
+
+volumes:
+  arthasathi_data:
+  arthasathi_logs:
+  redis_data:
