@@ -40,11 +40,11 @@ CALCULATION_TESTS = [
      "expected_months": float("inf")},  # minimum payment = interest only!
 
     {"type": "months_to_payoff", "principal": 30000, "rate": 36, "payment": 1500,
-     "expected_months": 38, "tolerance": 2},
+     "expected_months": 31, "tolerance": 2},
 
     {"type": "tax", "income": 500000, "regime": "new", "expected_tax": 0},
     {"type": "tax", "income": 700000, "regime": "new", "expected_tax": 0},
-    {"type": "tax", "income": 1000000, "regime": "new", "expected_tax": 30000, "tolerance": 500},
+    {"type": "tax", "income": 1000000, "regime": "new", "expected_tax": 62400, "tolerance": 500},
     {"type": "tax", "income": 300000, "regime": "old", "expected_tax": 0},
 
     {"type": "gst", "turnover": 3000000, "expected_status": "NOT_REQUIRED"},
@@ -158,11 +158,7 @@ class PerplexityEvaluator:
                     input_ids = torch.tensor([chunk[:-1]], dtype=torch.long).to(self.device)
                     targets   = torch.tensor([chunk[1:]],  dtype=torch.long).to(self.device)
 
-                    logits, _ = self.model(input_ids)
-                    loss      = F.cross_entropy(
-                        logits.view(-1, self.model.config.vocab_size),
-                        targets.view(-1),
-                    )
+                    logits, loss = self.model(input_ids, targets=targets)
                     total_nll  += loss.item() * targets.numel()
                     total_toks += targets.numel()
 
@@ -608,7 +604,8 @@ if __name__ == "__main__":
         # Generate function for language/hallucination/safety tests
         async def gen(prompt: str, user_id: str, lang: str) -> str:
             ids = tok.encode(
-                f"<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n"
+                f"<|user|>\n{prompt}[EOS]\n<|assistant|>\n",
+                add_special_tokens=False
             ).ids[-512:]
             x   = torch.tensor([ids], dtype=torch.long).to(device)
             out = model.generate(x, max_new_tokens=150, temperature=0.7)

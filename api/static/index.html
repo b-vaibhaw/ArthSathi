@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArthaSathi AI — Financial Companion & Debt escape Architect</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <!-- Background Apple-style Overlapping Ovals -->
+    <div class="bg-ovals-container">
+        <div class="bg-oval oval-1"></div>
+        <div class="bg-oval oval-2"></div>
+        <div class="bg-oval oval-3"></div>
+    </div>
+    
+    <!-- Authentic Login Overlay -->
+    <div id="auth-overlay" class="auth-overlay">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <i class="fa-solid fa-scale-balanced"></i>
+            </div>
+            <h2 id="auth-title">ArthaSathi AI</h2>
+            <p id="auth-subtitle">Empowering India's micro-entrepreneurs. Sign in to access your personal dashboard.</p>
+            
+            <div class="auth-tabs">
+                <button id="auth-tab-login" class="auth-tab-btn active">Sign In</button>
+                <button id="auth-tab-register" class="auth-tab-btn">Register</button>
+            </div>
+            
+            <form id="auth-form" class="auth-form">
+                <div class="form-row">
+                    <label for="auth-username">Username</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="auth-username" placeholder="Enter username" required autocomplete="username">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label for="auth-password">Password</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="auth-password" placeholder="Enter password" required autocomplete="current-password">
+                        <i id="password-toggle" class="fa-solid fa-eye password-toggle"></i>
+                    </div>
+                </div>
+                
+                <div id="auth-error" class="auth-error-msg hidden"></div>
+                <div id="auth-success" class="auth-success-msg hidden"></div>
+                
+                <button type="submit" id="auth-submit-btn" class="submit-btn auth-btn">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="app-container">
+        
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                <div class="logo-text">
+                    <h1>ArthaSathi AI</h1>
+                    <p>Money Coach & Debt Escape Architect</p>
+                </div>
+            </div>
+            <div class="header-status">
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle Light/Dark Theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                
+                <div id="api-status-badge" class="status-badge checking">
+                    <span class="pulse-dot"></span>
+                    <span id="api-status-text">Checking systems...</span>
+                </div>
+                
+                <!-- User Profile & Logout -->
+                <div id="header-user-info" class="header-user-info hidden">
+                    <i class="fa-solid fa-user-circle"></i>
+                    <span id="header-username">User</span>
+                    <button id="logout-btn" class="logout-btn" title="Log Out"><i class="fa-solid fa-right-from-bracket"></i></button>
+                </div>
+                <div class="lang-selector-wrapper">
+                    <i class="fa-solid fa-language"></i>
+                    <select id="user-language" class="lang-select">
+                        <option value="hi" selected>Hindi (हिंदी)</option>
+                        <option value="en">English (English)</option>
+                        <option value="mr">Marathi (मराठी)</option>
+                        <option value="ta">Tamil (தமிழ்)</option>
+                        <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                        <option value="te">Telugu (తెలుగు)</option>
+                        <option value="bn">Bengali (বাংলা)</option>
+                        <option value="as">Assamese (অসমীয়া)</option>
+                        <option value="bho">Bhojpuri (भोजपुरी)</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <main class="app-main-grid">
+
+            <!-- Left Panel: Chatbot Interface -->
+            <section class="panel chat-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-regular fa-comment-dots text-primary"></i> Conversation with ArthaSathi</h2>
+                    <span class="subtitle">Simulate WhatsApp / Voice chat</span>
+                </div>
+                
+                <div id="chat-messages" class="chat-messages-container">
+                    <div class="message assistant">
+                        <div class="message-avatar"><i class="fa-solid fa-robot"></i></div>
+                        <div class="message-content">
+                            <p>Namaste! Main ArthaSathi hoon — aapka financial dost. Main aapke loans, debt settlement, business pricing aur tax computation me madad kar sakta hoon. Aap mujhse Hindi, English ya kisi aur regional language me baat kar sakte hain. Share guidelines like loan interest rates or business income.</p>
+                            <span class="message-time">Just now</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-suggestions">
+                    <button class="suggest-btn" data-query="Mera credit card ka 40,000 ka loan hai aur salary 20,000 hai. Kya karu?">💳 Debt Help</button>
+                    <button class="suggest-btn" data-query="Meri vegetable shop hai. Cost 300 hai, kitne me bechu?">🏪 Pricing Tip</button>
+                    <button class="suggest-btn" data-query="Kya mujhe business ke liye GST register karna padega? Turnover 25 Lakh hai.">📋 GST Scheme</button>
+                    <button class="suggest-btn" data-query="Mudra loan kaise milega aur usme kya documents lagte hain?">🏦 Mudra Loan</button>
+                </div>
+
+                <div class="chat-input-area">
+                    <form id="chat-form" class="chat-form">
+                        <input type="text" id="chat-input" placeholder="Ask anything about loans, tax, pricing, etc..." required autocomplete="off">
+                        
+                        <div class="chat-actions">
+                            <button type="button" id="voice-simulate-btn" class="action-btn voice-btn" title="Simulate Voice Input">
+                                <i class="fa-solid fa-microphone"></i>
+                            </button>
+                            <button type="submit" class="action-btn send-btn" id="send-msg-btn">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Right Panel: Financial Tools & Profiler -->
+            <section class="panel tools-panel">
+                <div class="tabs-header">
+                    <button class="tab-btn active" data-tab="tab-profile"><i class="fa-solid fa-id-card"></i> Profile & Memory</button>
+                    <button class="tab-btn" data-tab="tab-debt"><i class="fa-solid fa-wallet"></i> Debt Payoff</button>
+                    <button class="tab-btn" data-tab="tab-pricing"><i class="fa-solid fa-calculator"></i> Pricing & GST</button>
+                    <button class="tab-btn" data-tab="tab-tax"><i class="fa-solid fa-percent"></i> Tax Planner</button>
+                </div>
+
+                <div class="tab-content-container">
+                    
+                    <!-- Tab 1: Profile & Memory -->
+                    <div id="tab-profile" class="tab-content active">
+                        <div class="profile-card">
+                            <div class="profile-header">
+                                <div class="profile-avatar"><i class="fa-solid fa-user-tie"></i></div>
+                                <div>
+                                    <h3 id="profile-user-id">User ID: Guest_User_1</h3>
+                                    <p class="profile-subtitle">Real-time memory sync via SQLite</p>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-metrics-grid">
+                                <div class="metric-card">
+                                    <span class="metric-label">Monthly Income</span>
+                                    <div class="metric-value-wrapper">
+                                        <span class="currency">₹</span>
+                                        <input type="number" id="profile-income-input" value="25000" min="0">
+                                    </div>
+                                </div>
+                                <div class="metric-card">
+                                    <span class="metric-label">Total Debt</span>
+                                    <div class="metric-value-wrapper text-danger">
+                                        <span class="currency">₹</span>
+                                        <span id="profile-total-debt">0</span>
+                                    </div>
+                                </div>
+                                <div class="metric-card">
+                                    <span class="metric-label">Debt-to-Income</span>
+                                    <div class="metric-value-wrapper text-warning">
+                                        <span id="profile-dti">0</span><span class="pct">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-title">
+                            <h3><i class="fa-solid fa-cart-shopping"></i> Transaction Logs (Voice / App)</h3>
+                            <button id="add-txn-btn" class="small-btn"><i class="fa-solid fa-plus"></i> Add</button>
+                        </div>
+                        <div class="table-container">
+                            <table id="transactions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Category</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="empty-row">
+                                        <td colspan="5">No transactions recorded. Talk to ArthaSathi to record via voice note!</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Manual Add Transaction Dialog -->
+                        <div id="txn-dialog" class="modal-dialog hidden">
+                            <div class="modal-content">
+                                <h4>Add Transaction</h4>
+                                <div class="form-row">
+                                    <label>Type</label>
+                                    <select id="modal-txn-type">
+                                        <option value="income">Income</option>
+                                        <option value="expense">Expense</option>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <label>Amount (₹)</label>
+                                    <input type="number" id="modal-txn-amount" value="500">
+                                </div>
+                                <div class="form-row">
+                                    <label>Category</label>
+                                    <select id="modal-txn-cat">
+                                        <option value="business">Business</option>
+                                        <option value="salary">Salary</option>
+                                        <option value="food">Food</option>
+                                        <option value="rent">Rent</option>
+                                        <option value="transport">Transport</option>
+                                        <option value="emi">EMI</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <label>Description</label>
+                                    <input type="text" id="modal-txn-desc" placeholder="e.g. Sold groceries">
+                                </div>
+                                <div class="modal-actions">
+                                    <button id="modal-txn-cancel" class="cancel-btn">Cancel</button>
+                                    <button id="modal-txn-save" class="save-btn">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Debt Payoff Engine -->
+                    <div id="tab-debt" class="tab-content">
+                        <div class="tab-intro">
+                            <h3>Debt Escape Architect</h3>
+                            <p>Calculate your repayment plan and savings. We compare the mathematically optimal **Avalanche** method against the psychologically motivating **Snowball** method.</p>
+                        </div>
+
+                        <div class="debt-split">
+                            <div class="debt-form-area">
+                                <h4>Add Active Loan</h4>
+                                <form id="add-debt-form">
+                                    <div class="form-row">
+                                        <label>Lender Name</label>
+                                        <input type="text" id="debt-name" placeholder="e.g. HDFC Credit Card" required>
+                                    </div>
+                                    <div class="form-row">
+                                        <label>Outstanding Principal (₹)</label>
+                                        <input type="number" id="debt-principal" placeholder="e.g. 30000" min="1" required>
+                                    </div>
+                                    <div class="form-row">
+                                        <label>Interest Rate (Annual %)</label>
+                                        <input type="number" id="debt-rate" placeholder="e.g. 36" min="0" step="0.1" required>
+                                    </div>
+                                    <div class="form-row">
+                                        <label>Minimum Monthly EMI (₹)</label>
+                                        <input type="number" id="debt-emi" placeholder="e.g. 1200" min="0" required>
+                                    </div>
+                                    <div class="form-row">
+                                        <label>Lender Type</label>
+                                        <select id="debt-lender-type">
+                                            <option value="bank">Commercial Bank</option>
+                                            <option value="nbfc">NBFC / Microfinance</option>
+                                            <option value="payday">Payday Lender</option>
+                                            <option value="moneylender">Local Moneylender</option>
+                                            <option value="friend">Friend / Relative</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="submit-btn" id="add-debt-btn">Add Debt Item</button>
+                                </form>
+                            </div>
+
+                            <div class="debt-list-area">
+                                <h4>Active Debt Checklist</h4>
+                                <div class="table-container">
+                                    <table id="debts-list-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Lender</th>
+                                                <th>Principal</th>
+                                                <th>Interest</th>
+                                                <th>EMI</th>
+                                                <th>Type</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="empty-debt-row">
+                                                <td colspan="6">No debts registered. Add one using the form.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payoff Strategy Results -->
+                        <div id="payoff-results-section" class="payoff-results-section hidden">
+                            <hr class="section-divider">
+                            <div class="strategy-comparison">
+                                <div class="comparison-card recommended">
+                                    <div class="card-tag">Recommended Strategy</div>
+                                    <h3 id="recommendation-title">Debt Avalanche</h3>
+                                    <p id="recommendation-desc">Pay minimums on all, put extra cash towards highest interest.</p>
+                                    <div class="savings-amount">
+                                        <span>Interest Saved:</span>
+                                        <span id="interest-savings-val" class="highlight text-success">₹0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="strategy-details-grid">
+                                <div class="strategy-sheet">
+                                    <h4><i class="fa-solid fa-bolt text-warning"></i> Avalanche Priority Order</h4>
+                                    <ul id="avalanche-list" class="priority-list"></ul>
+                                </div>
+                                <div class="strategy-sheet">
+                                    <h4><i class="fa-solid fa-snowflake text-primary"></i> Snowball Priority Order</h4>
+                                    <ul id="snowball-list" class="priority-list"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: Pricing & GST Engine -->
+                    <div id="tab-pricing" class="tab-content">
+                        <div class="grid-2-cols">
+                            
+                            <!-- Section: Business Pricing -->
+                            <div class="card-form">
+                                <h3><i class="fa-solid fa-shop text-primary"></i> Micro-Business Pricing Calculator</h3>
+                                <p class="card-desc">Street vendors, tailors, and micro-retailers: calculate target profit markup.</p>
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <label>Cost of Goods / Raw Materials (₹)</label>
+                                        <input type="number" id="pricing-cog" value="300" min="0">
+                                    </div>
+                                    <div class="form-row">
+                                        <label>Operating / Direct Expenses (₹)</label>
+                                        <input type="number" id="pricing-opex" value="50" min="0">
+                                    </div>
+                                    <div class="form-row">
+                                        <label>Target Profit Margin (%)</label>
+                                        <input type="number" id="pricing-margin" value="20" min="1">
+                                    </div>
+                                    <div class="form-row">
+                                        <label>Market Competition Level</label>
+                                        <select id="pricing-competition">
+                                            <option value="low">Low Competition (Higher Margin)</option>
+                                            <option value="medium" selected>Medium Competition</option>
+                                            <option value="high">High Competition (Squeeze Margin)</option>
+                                        </select>
+                                    </div>
+                                    <button id="calc-price-btn" class="submit-btn">Calculate Suggested Prices</button>
+                                </div>
+
+                                <div id="pricing-results" class="calc-results-block hidden">
+                                    <div class="result-row">
+                                        <span>Total Production Cost:</span>
+                                        <strong id="pricing-res-total-cost">₹0</strong>
+                                    </div>
+                                    <div class="result-row highlighted">
+                                        <span>Suggested Selling Price:</span>
+                                        <strong id="pricing-res-suggested">₹0</strong>
+                                    </div>
+                                    <div class="result-row">
+                                        <span>Target Margin Price:</span>
+                                        <strong id="pricing-res-target">₹0</strong>
+                                    </div>
+                                    <div class="result-row text-danger">
+                                        <span>Breakeven price (Never go below):</span>
+                                        <strong id="pricing-res-min">₹0</strong>
+                                    </div>
+                                    <p class="explanation-note" id="pricing-res-note"></p>
+                                </div>
+                            </div>
+
+                            <!-- Section: GST Checker -->
+                            <div class="card-form">
+                                <h3><i class="fa-solid fa-file-invoice-dollar text-success"></i> Indian GST Threshold Checker</h3>
+                                <p class="card-desc">Check if your annual turnover requires registration or qualifies for composition scheme.</p>
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <label>Estimated Annual Turnover (₹)</label>
+                                        <input type="number" id="gst-turnover" value="2500000" min="0">
+                                    </div>
+                                    <div class="form-row">
+                                        <label>State Category</label>
+                                        <select id="gst-state">
+                                            <option value="general" selected>General State (e.g. Maharashtra, Tamil Nadu)</option>
+                                            <option value="special">Special Category State (Northeast / Uttarakhand / HP)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-row">
+                                        <label>Supplies / Business Category</label>
+                                        <select id="gst-type">
+                                            <option value="goods" selected>Dealing in Goods / Raw Materials</option>
+                                            <option value="services">Providing Services</option>
+                                        </select>
+                                    </div>
+                                    <button id="calc-gst-btn" class="submit-btn">Check GST Requirement</button>
+                                </div>
+
+                                <div id="gst-results" class="calc-results-block hidden">
+                                    <div class="result-row highlighted">
+                                        <span>Registration Requirement:</span>
+                                        <strong id="gst-res-status">-</strong>
+                                    </div>
+                                    <div class="result-row">
+                                        <span>Estimated GST Scheme:</span>
+                                        <strong id="gst-res-scheme">-</strong>
+                                    </div>
+                                    <p class="explanation-note" id="gst-res-advice"></p>
+                                    <div class="step-guide">
+                                        <span>Next Step:</span>
+                                        <p id="gst-res-step"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Tab 4: Tax Planner & Credit Score -->
+                    <div id="tab-tax" class="tab-content">
+                        <div class="grid-2-cols">
+                            
+                            <!-- Section: Tax Planner -->
+                            <div class="card-form">
+                                <h3><i class="fa-solid fa-percent text-warning"></i> Income Tax Calculator (FY 2023-24)</h3>
+                                <p class="card-desc">Quickly estimate tax liability under new vs old regime with rebates.</p>
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <label>Annual Gross Income (₹)</label>
+                                        <input type="number" id="tax-income" value="800000" min="0">
+                                    </div>
+                                    <div class="form-row">
+                                        <label>Age of Assessee</label>
+                                        <input type="number" id="tax-age" value="35" min="1" max="120">
+                                    </div>
+                                    <div class="form-row">
+                                        <label>Deductions under Old Regime (80C, etc. ₹)</label>
+                                        <input type="number" id="tax-deductions" value="150000" min="0">
+                                    </div>
+                                    <button id="calc-tax-btn" class="submit-btn">Estimate Taxes</button>
+                                </div>
+
+                                <div id="tax-results" class="calc-results-block hidden">
+                                    <div class="comparison-grid">
+                                        <div class="regime-col">
+                                            <h5>New Regime</h5>
+                                            <p id="tax-res-new-val" class="tax-value">₹0</p>
+                                            <span id="tax-res-new-rate" class="tax-rate">0% effective</span>
+                                        </div>
+                                        <div class="regime-col">
+                                            <h5>Old Regime</h5>
+                                            <p id="tax-res-old-val" class="tax-value">₹0</p>
+                                            <span id="tax-res-old-rate" class="tax-rate">0% effective</span>
+                                        </div>
+                                    </div>
+                                    <p id="tax-res-recommendation" class="tax-recommendation-note"></p>
+                                </div>
+                            </div>
+
+                            <!-- Section: Microloan Readiness & Credit Profile -->
+                            <div class="card-form">
+                                <h3><i class="fa-solid fa-hand-holding-dollar text-primary"></i> Microloan Eligibility Profiler</h3>
+                                <p class="card-desc">Based on monthly income and transactions recorded via voice notes.</p>
+                                <div class="form-group">
+                                    <button id="calc-credit-btn" class="submit-btn">Evaluate My Credit Readiness</button>
+                                </div>
+
+                                <div id="credit-results" class="calc-results-block hidden">
+                                    <div class="result-row highlighted">
+                                        <span>Status:</span>
+                                        <strong id="credit-res-status">-</strong>
+                                    </div>
+                                    <div class="result-row">
+                                        <span>Max Eligible Loan:</span>
+                                        <strong id="credit-res-loan" class="text-success">₹0</strong>
+                                    </div>
+                                    <div class="result-row">
+                                        <span>Estimated Monthly EMI:</span>
+                                        <strong id="credit-res-emi">₹0</strong>
+                                    </div>
+                                    <div class="result-row">
+                                        <span>Income Regularity:</span>
+                                        <strong id="credit-res-regularity">-</strong>
+                                    </div>
+                                    
+                                    <div class="credit-list-box">
+                                        <h5>Recommended Regulated Lenders:</h5>
+                                        <ul id="credit-res-lenders" class="bullet-list"></ul>
+                                    </div>
+                                    <div class="credit-list-box">
+                                        <h5>Required Document Checklist:</h5>
+                                        <ul id="credit-res-docs" class="bullet-list"></ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+        
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; 2026 ArthaSathi AI. Open-source under MIT License. Free forever for the financial empowerment of India's informal sector.</p>
+        </footer>
+
+    </div>
+
+    <!-- Voice Simulator Dialog -->
+    <div id="voice-dialog" class="voice-modal hidden">
+        <div class="voice-modal-content">
+            <div class="voice-wave">
+                <span class="stroke"></span>
+                <span class="stroke"></span>
+                <span class="stroke"></span>
+                <span class="stroke"></span>
+                <span class="stroke"></span>
+            </div>
+            <h4>Simulating Voice Recording</h4>
+            <p>Select what you want to "speak" to ArthaSathi:</p>
+            <div class="voice-options">
+                <button class="voice-opt-btn" data-audio-text="मैंने आज दुकान में पांच सौ रुपये की सब्जी बेची और दो सौ रुपये खर्च किए।">🏪 "Aaj 500 ka becha, 200 kharch kiya" (Hindi)</button>
+                <button class="voice-opt-btn" data-audio-text="Bajaj Finance ka loan bees hazaar hai aur unka monthly interest do percent hai.">💳 "Bajaj ka loan 20,000 hai, interest 2% hai" (Hindi-English)</button>
+                <button class="voice-opt-btn" data-audio-text="Maza dukanacha varshik turnover pandra lakh ahe, maza GST registration pahije ka?">🏪 "Annual turnover 15 lakh ahe, GST pahije ka?" (Marathi)</button>
+                <button class="voice-opt-btn" data-audio-text="My credit card debt is 30,000 and bank is calling at 10 PM. What are my rights?">🛡️ "Credit card debt is 30k, bank calls at 10 PM" (English)</button>
+            </div>
+            <button id="voice-dialog-close" class="small-btn mt-1">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Custom JS -->
+    <script src="/static/app.js"></script>
+</body>
+</html>

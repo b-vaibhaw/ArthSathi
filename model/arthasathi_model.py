@@ -432,7 +432,7 @@ class ArthaSathiLLM(nn.Module):
         if scheduler is not None:
             payload["scheduler_state_dict"] = scheduler.state_dict()
         torch.save(payload, path)
-        print(f"[Checkpoint] Saved step {step} → {path}")
+        print(f"[Checkpoint] Saved step {step} -> {path}")
 
     @classmethod
     def from_checkpoint(cls, path: str, device: str = "cpu") -> "ArthaSathiLLM":

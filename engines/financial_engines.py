@@ -377,19 +377,19 @@ class BusinessEngine:
 
         if state.lower() in special_states:
             mandatory_threshold  = 1_000_000   # 10 lakh
-            composition_threshold = 750_000    # 7.5 lakh
+            composition_threshold = 7_500_000    # 75 lakh
         elif supplies_type == "services":
             mandatory_threshold  = 2_000_000   # 20 lakh
-            composition_threshold = 1_500_000  # 15 lakh
+            composition_threshold = 5_000_000  # 50 lakh
         else:
             mandatory_threshold  = 4_000_000   # 40 lakh for goods
-            composition_threshold = 3_000_000  # 30 lakh composition
+            composition_threshold = 15_000_000  # 1.5 crore composition
 
-        if annual_turnover < composition_threshold:
+        if annual_turnover < mandatory_threshold:
             status   = "NOT_REQUIRED"
             rate     = None
             advice   = "Below threshold. No GST registration needed. Save paperwork."
-        elif annual_turnover < mandatory_threshold:
+        elif annual_turnover <= composition_threshold:
             status   = "OPTIONAL_COMPOSITION"
             rate     = 1.0 if supplies_type == "goods" else 6.0  # GST %
             advice   = f"Optional Composition Scheme: Pay only {rate}% GST on turnover. Simple."

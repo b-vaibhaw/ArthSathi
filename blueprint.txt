@@ -1,0 +1,968 @@
+ArthaSathi AI
+Micro-Entrepreneur Money Coach + Debt Escape Architect
+Complete A-to-Z Blueprint: Train Your Own LLM | 9+ Indian Languages | 700M+ People | Enterprise Scale
+Purpose
+Serve 700M+ micro-entrepreneurs and 1.5B debt-trapped people with AI-native financial intelligence, built in India, for India and the world.
+Languages Supported
+Hindi • English • Marathi • Tamil • Kannada • Bhojpuri • Assamese • Bengali • Telugu + extensible to 40 more
+700M+
+Target Users
+9+
+Indian Languages
+100%
+From Scratch
+2 Steps
+Colab + Your PC
+SECTION 1: PRODUCT VISION — ArthaSathi AI
+ArthaSathi (Hindi: अर्थसाथी, meaning 'Financial Companion') is a single unified AI system combining two critical financial survival tools: the Micro-Entrepreneur Money Coach and the Debt Escape Architect. It runs on WhatsApp, SMS, and a lightweight app, supports 9+ Indian languages including Hindi, Marathi, Tamil, Kannada, Bhojpuri, Assamese, Bengali, Telugu, and English. It is built entirely from scratch — no OpenAI API, no paid dependencies — and designed to eventually serve half a billion people.
+1.1 The Two Modules — Unified into One Brain
+Module A: Debt Escape Architect
+Ingests all user debt (credit card, payday loans, medical bills, informal loans from moneylenders). Builds adaptive payoff roadmap. Generates negotiation scripts in user's own language. Teaches financial literacy as it guides. Monitors behavioral spending. Alerts when risk increases. Drafts settlement letters to creditors.
+Module B: Micro-Entrepreneur Coach
+Tracks income/expenses by voice note in local language. Builds a digital financial history from zero. Advises on pricing strategy for street vendors, tailors, gig workers. Guides tax preparation (GST, ITR for informal sector). Generates microloan application data. Identifies when the business is profitable or sinking.
+Unified Intelligence Layer
+Both modules share one LLM backbone. A user's business income data directly informs their debt payoff capacity. A user's debt load informs how aggressively they should price their services. The system sees the full financial picture — not two siloed tools.
+Delivery Channels
+WhatsApp Business API (primary). SMS fallback for feature phones (no internet). Voice note transcription and response. Regional language keyboard support. Offline-capable cached responses for rural users with poor connectivity.
+1.2 Why Build Your Own LLM — Not Use ChatGPT/Claude API
+6 Reasons to Build From Scratch
+1. DATA SOVEREIGNTY: Your users' financial data — income, debts, loan amounts — cannot legally or ethically flow to US servers under Indian data protection law (DPDP Act 2023).
+2. LANGUAGE DEPTH: GPT-4 handles Hindi and English. It is poor at Bhojpuri, Assamese, regional Marathi dialects, and code-switched speech like 'mera 5000 ka loan hai bhai'. Your model will be trained on exactly this.
+3. COST AT SCALE: At 700M users, paying per-token API cost would be $50-200M/month. Your own model runs at <$0.001 per user per day.
+4. DOMAIN SPECIALIZATION: General LLMs hallucinate on Indian tax rules (GST, ITR-1 for informal workers), RBI microfinance regulations, and local creditor negotiation customs. Your model knows these cold.
+5. FINE-TUNED PERSONA: ArthaSathi has a consistent, culturally appropriate persona — speaks like a trusted elder from the community, not a Silicon Valley chatbot.
+6. MOAT: A model trained on 700M Indian financial conversations is an asset no competitor can replicate. This IS the business.
+SECTION 2: FULL SYSTEM ARCHITECTURE
+2.1 Architecture Overview — The Full Stack
+The system has four distinct layers, each built independently and connected through clean interfaces:
+LAYER 1
+DATA LAYER
+Open-source datasets + synthetic generation + user interaction logs → cleaned, deduplicated, language-tagged corpus of 15-50GB text in 9 languages
+LAYER 2
+MODEL LAYER
+Custom Tokenizer (BPE, 60K vocab, 9 languages) → Pre-train GPT-2 style LLM from scratch → Fine-tune on financial domain → RLHF alignment on ArthaSathi persona
+LAYER 3
+REASONING LAYER
+RAG engine with FAISS vector store → Tool use (calculator, date parser, EMI formula) → Memory module (user financial profile) → Multi-turn conversation state
+LAYER 4
+DELIVERY LAYER
+WhatsApp Business API → SMS gateway (Twilio/MSG91) → Voice note STT (Whisper fine-tuned) → Response TTS for audio replies → REST API for app integration
+2.2 Model Size Decision — What to Build
+▶
+You are running on Google Colab (T4/A100 GPU) + your personal PC. Here is the exact model size strategy based on realistic compute budgets.
+Model Option
+Parameters
+What You Get
+GPT-2 Small (Scratch)
+117M params
+Trainable on Colab free tier. 10GB dataset. Good for Phase 1 MVP.
+GPT-2 Medium (Scratch)
+345M params
+Colab Pro recommended. 25GB dataset. Better financial reasoning.
+GPT-2 Large (Fine-tune)
+774M params
+Colab A100 or PC with 24GB VRAM. Best quality for launch.
+LLaMA-2 7B (Fine-tune)
+7B params
+PC with 2x RTX 3090 or Colab A100. Near-GPT-4 quality at low cost.
+RECOMMENDED: 345M Scratch + 7B Fine-tune
+Two-stage
+Build understanding at 345M. Deploy intelligence at 7B fine-tune.
+SECTION 3: DATASETS — OPEN SOURCE + PIPELINE
+3.1 Master Dataset Plan — 50GB Target Corpus
+To train a model capable of serving half a country (700M people), you need a corpus that is large enough to give statistical language coverage, diverse enough to cover all 9 languages and dialects, and domain-rich enough to handle financial topics correctly. The target is 50GB of cleaned text, which after BPE tokenization gives approximately 15-20 billion tokens — enough for a strong 345M parameter model.
+TIER 1: LANGUAGE FOUNDATION DATASETS (Pre-training Base)
+These give the model its multilingual foundation — grammar, vocabulary, and general world knowledge in all 9 languages.
+Dataset Name
+Languages / Size
+Download Link & Notes
+IndicCorp v2 (AI4Bharat)
+Hindi, Marathi, Tamil, Kannada, Assamese, Bengali, Bhojpuri, Telugu — 20.9B words total
+huggingface.co/datasets/ai4bharat/IndicCorp — LARGEST Indian language corpus, completely free
+Sangraha (AI4Bharat)
+All 9 languages — 251B tokens, high quality filtered
+huggingface.co/datasets/ai4bharat/sangraha — Best quality, pre-filtered for noise
+CC-100 (Common Crawl)
+Hindi (hi), Marathi (mr), Tamil (ta), Bengali (bn), Assamese (as) — web-scale
+data.statmt.org/cc-100 — Large but noisy, needs filtering
+Wikipedia Dumps
+All 9 languages — factual structured text
+dumps.wikimedia.org — Use the latest XML dumps, extract with wikiextractor
+OSCAR Corpus
+Hindi, Marathi, Tamil, Bengali — deduplicated CommonCrawl
+huggingface.co/datasets/oscar-corpus/OSCAR-2301
+mC4 (Multilingual C4)
+Hindi, Marathi, Tamil, Kannada, Bengali, Assamese, Telugu, English
+huggingface.co/datasets/mc4 — Filter by language code
+TIER 2: FINANCIAL DOMAIN DATASETS (Fine-tuning Core)
+These teach the model financial concepts, Indian regulations, debt management, and micro-business economics.
+Dataset Name
+Content / Size
+Notes
+FinGPT Financial Datasets
+SEC filings, earnings calls, financial news, analyst reports — adapted for Indian context
+github.com/AI4Finance-Foundation/FinGPT — Translate subset to Hindi/regional
+RBI Annual Reports (Public PDFs)
+Indian monetary policy, microfinance regulations, NBFC rules, interest rate guidelines
+rbi.org.in — Scrape & extract 20 years of reports = ~2GB clean text
+SEBI Investor Education Material
+Mutual funds, debt instruments, financial literacy in Hindi and English
+sebi.gov.in/investor-education — Free PDFs in Hindi
+GST Council Circulars
+GST rules for small businesses, informal sector, registration thresholds
+gst.gov.in — All circulars publicly available, extract text
+ITR Help Documentation
+Income tax filing guidance for ITR-1, ITR-4 (presumptive income for small business)
+incometax.gov.in — Convert PDF guides to text
+NABARD Publications
+Microfinance, rural credit, self-help group lending patterns in India
+nabard.org — Publications page, free download
+Financial Literacy Datasets (FinLit)
+Q&A style financial literacy content, household budgeting scenarios
+huggingface.co/datasets — Search 'financial literacy'
+MicroSave India Research
+Informal worker financial behavior, debt patterns, savings behavior — India specific
+microsave.net/research — Download free reports, extract text
+TIER 3: CONVERSATIONAL & INSTRUCTION DATASETS (Chat Fine-tuning)
+These teach the model to be a helpful conversational assistant — not just generate text but respond to queries appropriately.
+Dataset Name
+Content
+Notes
+Indic-Instruct (AI4Bharat)
+200K+ instruction-following examples in 22 Indian languages
+huggingface.co/datasets/ai4bharat/indic-instruct-data-v0.1
+Anudesh (AI4Bharat)
+Human-translated instruction dataset, 9 Indian languages
+huggingface.co/ai4bharat — High quality, human-annotated
+Dolly 15K (Databricks) — Translated
+15,000 instruction-response pairs — translate to Hindi/Marathi/Tamil
+huggingface.co/datasets/databricks/databricks-dolly-15k
+OpenAssistant Conversations
+Multi-turn human feedback conversations — 161K messages in 35 languages
+huggingface.co/datasets/OpenAssistant/oasst1
+Alpaca Dataset — Translated
+52K instruction-following examples from Stanford — translate to regional languages
+huggingface.co/datasets/tatsu-lab/alpaca
+IndicQA (AI4Bharat)
+Question answering in 11 Indian languages — 6,000+ QA pairs
+huggingface.co/datasets/ai4bharat/IndicQA
+TIER 4: SYNTHETIC DATASET GENERATION (Your Secret Weapon)
+▶
+This is where ArthaSathi becomes truly unique. You will generate 2-5 million synthetic financial conversations in all 9 languages using a free LLM (Mistral/LLaMA on Colab) — conversations that NO other model has been trained on.
+Generate 250,000+ synthetic conversations per language category using these scenario seeds:
+Scenario Seeds for Synthetic Data Generation
+DEBT SCENARIOS: User with 3 loans, income dropped — how to prioritize repayment. Payday loan trap — user took new loan to pay old one. Medical emergency debt — hospital bill negotiation. Credit card minimum payment trap explanation. Moneylender debt at 36% interest — legal options in India.
+MICRO-BUSINESS SCENARIOS: Street vegetable vendor — daily expense tracking by voice. Tailor business — pricing strategy, material cost vs labor. Auto-rickshaw driver — expense vs income in code-switched Hindi. Kirana store owner — GST registration decision at Rs 20L threshold. Freelance graphic designer — invoice generation, advance payment request scripts.
+CODE-SWITCHED CONVERSATIONS (most important): 'Bhai mera 12000 ka loan hai aur 8000 salary hai, kya karu?' (Hindi-English). 'Majha 15,000 chya karjavar interest khup jast ahe' (Marathi). 'En loan pay panrathukku yenna panna?' (Tamil-English).
+LANGUAGE-SPECIFIC CULTURAL CONTEXT: Bhojpuri dialect debt language (different vocabulary from standard Hindi). Assamese rural farmer loan terminology. South Indian chit fund system explanation. Northeast India cooperative credit society rules.
+Tools to generate synthetic data on Colab for free:
+# Step 1: Load free LLaMA or Mistral on Colab
+# Use: mistralai/Mistral-7B-Instruct-v0.2 (free on HuggingFace)
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch, json
+model_id = 'mistralai/Mistral-7B-Instruct-v0.2'
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForCausalLM.from_pretrained(model_id, device_map='auto', torch_dtype=torch.float16)
+# Step 2: Define scenario prompt template
+def generate_conversation(scenario, language):
+    prompt = f'''Generate a realistic WhatsApp conversation in {language} between
+    ArthaSathi AI assistant and a poor Indian user in this situation: {scenario}.
+    The conversation should be 8-12 messages, use natural regional speech patterns,
+    include code-switching where natural, and end with actionable financial advice.
+    Format as JSON: [{{'role':'user','content':'...'}}, {{'role':'assistant','content':'...'}}]'''
+    # Generate and return parsed JSON
+# Step 3: Generate 1000 conversations per scenario per language
+# Save to JSONL: one conversation per line
+# Target: 250,000 conversations x 9 languages = 2.25M examples
+3.2 Dataset Pipeline — Download, Clean, Format
+PHASE
+1
+Download All Datasets
+Run these commands on your PC or Colab. Total download ~80GB raw, ~50GB after cleaning.
+# Install HuggingFace datasets
+pip install datasets transformers sentencepiece
+# Download IndicCorp v2 (most important dataset)
+from datasets import load_dataset
+for lang in ['hi','mr','ta','kn','as','bn','bho','te']:
+    ds = load_dataset('ai4bharat/IndicCorp', lang, split='train', streaming=True)
+    # Stream to avoid OOM — process in chunks of 100K lines
+    save_streaming_dataset(ds, f'raw_data/{lang}/indicorp.jsonl')
+# Download Sangraha (high quality)
+ds_sangraha = load_dataset('ai4bharat/sangraha', 'hi', split='train')
+# Download Wikipedia dumps
+# pip install wikiextractor
+for lang in ['hi','mr','ta','kn','as','bn','te']:
+    os.system(f'python -m wikiextractor https://dumps.wikimedia.org/{lang}wiki/latest/{lang}wiki-latest-pages-articles.xml.bz2 -o wiki_{lang}/')
+# Download financial PDFs (RBI, SEBI, NABARD)
+# Use requests + PyMuPDF to extract text
+import fitz  # pip install PyMuPDF
+def extract_pdf_text(pdf_path):
+    doc = fitz.open(pdf_path)
+    return ' '.join([page.get_text() for page in doc])
+PHASE
+2
+Clean & Deduplicate
+Remove low quality, duplicate, and toxic content. Reduces 80GB to ~50GB.
+# Full cleaning pipeline
+import re, hashlib
+from ftfy import fix_text  # pip install ftfy
+def clean_text(text, lang):
+    text = fix_text(text)  # Fix unicode encoding issues
+    text = re.sub(r'http\S+', '', text)  # Remove URLs
+    text = re.sub(r'\s+', ' ', text).strip()  # Normalize whitespace
+    text = re.sub(r'[^\w\s.,!?:;()\-।॥—]', '', text)  # Keep Indian punctuation
+    if len(text.split()) < 20: return None  # Remove too-short texts
+    return text
+# Deduplication using MinHash LSH
+from datasketch import MinHash, MinHashLSH  # pip install datasketch
+lsh = MinHashLSH(threshold=0.85, num_perm=128)
+seen_hashes = set()
+def is_duplicate(text):
+    m = MinHash(num_perm=128)
+    for word in text.split(): m.update(word.encode('utf8'))
+    result = lsh.query(m)
+    if result: return True
+    lsh.insert(hashlib.md5(text.encode()).hexdigest(), m)
+    return False
+# Language identification to ensure correct labeling
+from langdetect import detect  # pip install langdetect
+# Also use: IndicLID for Indian language detection
+# pip install indiclid
+from indiclid import IndicLID
+lang_detector = IndicLID()
+PHASE
+3
+Tokenizer Training
+Build a custom multilingual BPE tokenizer for all 9 Indian languages.
+This is the most critical and unique step. A standard tokenizer destroys Indian language text — a single Hindi word might become 8-15 tokens. Your custom tokenizer will reduce this to 2-3 tokens per word, making training 4x more efficient and the model far better at regional languages.
+# Train custom BPE tokenizer — THE MOST IMPORTANT STEP
+from tokenizers import Tokenizer, models, trainers, pre_tokenizers
+from tokenizers.models import BPE
+from tokenizers.trainers import BpeTrainer
+from tokenizers.pre_tokenizers import Whitespace
+# Initialize tokenizer
+tokenizer = Tokenizer(BPE(unk_token='[UNK]'))
+tokenizer.pre_tokenizer = Whitespace()
+# Vocabulary size: 60,000 (balances all 9 languages)
+# Standard GPT-2 has 50,257 vocab — we go bigger for multilingual coverage
+trainer = BpeTrainer(
+    vocab_size=60000,
+    min_frequency=3,
+    special_tokens=['[PAD]', '[UNK]', '[BOS]', '[EOS]', '[SEP]', '[MASK]',
+                    '[DEBT]', '[INCOME]', '[TAX]', '[LOAN]'],  # Domain tokens!
+    show_progress=True
+)
+# Train on 10GB balanced sample from all 9 languages
+# Use 1.1GB per language to ensure equal representation
+files = [f'cleaned_data/{lang}_sample.txt' for lang in
+         ['hi','en','mr','ta','kn','bho','as','bn','te']]
+tokenizer.train(files, trainer)
+tokenizer.save('arthasathi_tokenizer.json')
+# Verify: Test tokenization quality
+# Hindi: 'मेरा कर्ज चुकाना है' should be 4-6 tokens, not 20+
+# Tamil: 'என் கடன் திரும்ப' should be 4-5 tokens
+test_sentences = ['मेरा कर्ज 50000 है', 'My debt is 50000 rupees',
+                  'माझ्या कर्जावर खूप व्याज आहे', 'என் கடன் திரும்ப']
+for s in test_sentences:
+    enc = tokenizer.encode(s)
+    print(f'{s} -> {len(enc.tokens)} tokens: {enc.tokens}')
+PHASE
+4
+Format Final Training Data
+Convert everything to the format your LLM training script expects.
+# Final data format: Pre-training uses plain text chunks
+# Fine-tuning uses instruction-response pairs
+# PRE-TRAINING FORMAT (plain text, chunked to context length)
+# Each line = one training example of max 512 or 1024 tokens
+# File: pretrain_corpus.jsonl
+# {"text": "मेरा नाम राम है। मैं एक छोटे से दुकान चलाता हूं..."}
+# FINE-TUNING FORMAT (instruction following — Alpaca style)
+# {
+#   "instruction": "मेरे 3 loan हैं। कौन सा पहले चुकाएं?",
+#   "input": "Loan1: 50000 @ 18%, Loan2: 20000 @ 36%, Loan3: 100000 @ 12%",
+#   "output": "सबसे पहले Loan2 चुकाएं क्योंकि उसका interest rate 36% है जो सबसे ज़्यादा है...",
+#   "language": "hi",
+#   "module": "debt"
+# }
+# CHAT FORMAT (for conversation fine-tuning — ChatML style)
+# <|im_start|>user
+# bhai mera payday loan 15000 ka hai, kya karu?<|im_end|>
+# <|im_start|>assistant
+# Dekho bhai, payday loan ka interest bahut jyada hota hai...<|im_end|>
+# Final corpus sizes:
+# Pre-training: ~15B tokens (50GB text)
+# Fine-tuning: ~2M instruction examples
+# Chat fine-tuning: ~500K conversations
+SECTION 4: BUILD THE LLM FROM SCRATCH
+4.1 Model Architecture — Custom GPT-2 Style Transformer
+You are building a decoder-only transformer (same family as GPT-2, GPT-3, LLaMA). This architecture is the current gold standard for language generation and instruction following. Below is the complete custom implementation written for ArthaSathi — not copied from any library, built from first principles so you understand every component.
+4.1.1 Complete Model Code — arthasathi_model.py
+# arthasathi_model.py — ArthaSathi Custom LLM from Scratch
+# Architecture: Decoder-only Transformer (GPT-2 family)
+# Enhancements: RoPE positional encoding, SwiGLU activation, RMSNorm
+# These are LLaMA-style improvements over vanilla GPT-2
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import math
+from dataclasses import dataclass
+@dataclass
+class ArthaSathiConfig:
+    vocab_size: int = 60000      # Custom multilingual vocab
+    context_length: int = 1024   # Max tokens in context
+    d_model: int = 1024          # Embedding dimension
+    n_heads: int = 16            # Attention heads
+    n_layers: int = 24           # Transformer blocks
+    d_ff: int = 4096             # Feedforward hidden size
+    dropout: float = 0.1
+    rope_base: float = 10000.0   # RoPE frequency base
+    # Total params with these settings: ~345M
+class RMSNorm(nn.Module):  # Better than LayerNorm (LLaMA style)
+    def __init__(self, dim, eps=1e-6):
+        super().__init__()
+        self.eps = eps
+        self.weight = nn.Parameter(torch.ones(dim))
+    def forward(self, x):
+        return x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps) * self.weight
+class RotaryEmbedding(nn.Module):  # RoPE — better than learned positions
+    def __init__(self, dim, base=10000):
+        super().__init__()
+        inv_freq = 1.0 / (base ** (torch.arange(0,dim,2).float() / dim))
+        self.register_buffer('inv_freq', inv_freq)
+    def forward(self, seq_len, device):
+        t = torch.arange(seq_len, device=device).float()
+        freqs = torch.einsum('i,j->ij', t, self.inv_freq)
+        return torch.cat([freqs, freqs], dim=-1)
+def rotate_half(x):
+    x1, x2 = x[..., :x.shape[-1]//2], x[..., x.shape[-1]//2:]
+    return torch.cat([-x2, x1], dim=-1)
+def apply_rope(q, k, cos, sin):
+    return (q * cos) + (rotate_half(q) * sin), (k * cos) + (rotate_half(k) * sin)
+class SwiGLU(nn.Module):  # Better activation than ReLU/GELU
+    def __init__(self, d_model, d_ff):
+        super().__init__()
+        self.w1 = nn.Linear(d_model, d_ff, bias=False)
+        self.w2 = nn.Linear(d_ff, d_model, bias=False)
+        self.w3 = nn.Linear(d_model, d_ff, bias=False)
+    def forward(self, x):
+        return self.w2(F.silu(self.w1(x)) * self.w3(x))
+class MultiHeadAttention(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        assert config.d_model % config.n_heads == 0
+        self.n_heads = config.n_heads
+        self.head_dim = config.d_model // config.n_heads
+        self.Wq = nn.Linear(config.d_model, config.d_model, bias=False)
+        self.Wk = nn.Linear(config.d_model, config.d_model, bias=False)
+        self.Wv = nn.Linear(config.d_model, config.d_model, bias=False)
+        self.Wo = nn.Linear(config.d_model, config.d_model, bias=False)
+        self.rope = RotaryEmbedding(self.head_dim, config.rope_base)
+        self.dropout = nn.Dropout(config.dropout)
+    def forward(self, x, mask=None):
+        B, T, C = x.shape
+        q,k,v = self.Wq(x), self.Wk(x), self.Wv(x)
+        q = q.view(B,T,self.n_heads,self.head_dim).transpose(1,2)
+        k = k.view(B,T,self.n_heads,self.head_dim).transpose(1,2)
+        v = v.view(B,T,self.n_heads,self.head_dim).transpose(1,2)
+        cos_sin = self.rope(T, x.device)
+        cos = cos_sin.cos()[None,None,:,:]
+        sin = cos_sin.sin()[None,None,:,:]
+        q, k = apply_rope(q, k, cos, sin)
+        # Flash attention if available, else standard
+        attn = torch.nn.functional.scaled_dot_product_attention(
+            q, k, v, attn_mask=mask, dropout_p=self.dropout.p if self.training else 0.0,
+            is_causal=True)
+        out = attn.transpose(1,2).contiguous().view(B,T,C)
+        return self.Wo(out)
+class TransformerBlock(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.norm1 = RMSNorm(config.d_model)
+        self.attn = MultiHeadAttention(config)
+        self.norm2 = RMSNorm(config.d_model)
+        self.ffn = SwiGLU(config.d_model, config.d_ff)
+    def forward(self, x):
+        x = x + self.attn(self.norm1(x))  # Pre-norm residual
+        x = x + self.ffn(self.norm2(x))
+        return x
+class ArthaSathiLLM(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
+        self.embedding = nn.Embedding(config.vocab_size, config.d_model)
+        self.blocks = nn.ModuleList([TransformerBlock(config) for _ in range(config.n_layers)])
+        self.norm = RMSNorm(config.d_model)
+        self.lm_head = nn.Linear(config.d_model, config.vocab_size, bias=False)
+        # Weight tying: embedding and output share weights (saves params + improves quality)
+        self.lm_head.weight = self.embedding.weight
+        self.apply(self._init_weights)
+    def _init_weights(self, module):
+        if isinstance(module, nn.Linear):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
+            if module.bias is not None: torch.nn.init.zeros_(module.bias)
+        elif isinstance(module, nn.Embedding):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
+    def forward(self, input_ids, targets=None):
+        B, T = input_ids.shape
+        x = self.embedding(input_ids)
+        for block in self.blocks: x = block(x)
+        x = self.norm(x)
+        logits = self.lm_head(x)
+        loss = None
+        if targets is not None:
+            loss = F.cross_entropy(logits.view(-1, self.config.vocab_size), targets.view(-1))
+        return logits, loss
+    def param_count(self):
+        return sum(p.numel() for p in self.parameters())
+# Instantiate and verify
+# config = ArthaSathiConfig()  # 345M params
+# model = ArthaSathiLLM(config)
+# print(f'Parameters: {model.param_count()/1e6:.1f}M')  # Should print ~345M
+4.2 Training Script — Pre-Training from Scratch
+# train_pretrain.py — Run this on Colab A100 or your PC
+import torch
+from torch.optim import AdamW
+from torch.optim.lr_scheduler import CosineAnnealingLR
+import torch.amp as amp
+from arthasathi_model import ArthaSathiLLM, ArthaSathiConfig
+from arthasathi_dataset import PretrainDataset  # Your data loader
+# Hyperparameters
+BATCH_SIZE = 8          # Per GPU (Colab T4: use 4, A100: use 16)
+GRAD_ACCUM = 16         # Effective batch = 8 * 16 = 128 (standard for 345M)
+LEARNING_RATE = 3e-4    # Standard for this model size
+WARMUP_STEPS = 2000
+MAX_STEPS = 150000      # ~2 epochs over 15B token corpus
+CONTEXT_LEN = 1024
+SAVE_EVERY = 5000
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+config = ArthaSathiConfig()
+model = ArthaSathiLLM(config).to(device)
+# Optimizer with weight decay (AdamW is standard)
+# Separate decay groups: no decay on bias/norm params
+decay_params = [p for n,p in model.named_parameters() if p.dim() >= 2]
+no_decay_params = [p for n,p in model.named_parameters() if p.dim() < 2]
+optimizer = AdamW([
+    {'params': decay_params, 'weight_decay': 0.1},
+    {'params': no_decay_params, 'weight_decay': 0.0}
+], lr=LEARNING_RATE, betas=(0.9, 0.95))
+scheduler = CosineAnnealingLR(optimizer, T_max=MAX_STEPS, eta_min=LEARNING_RATE*0.1)
+scaler = amp.GradScaler()  # Mixed precision training (fp16)
+# Training loop
+model.train()
+for step in range(MAX_STEPS):
+    optimizer.zero_grad()
+    loss_accum = 0.0
+    for micro_step in range(GRAD_ACCUM):
+        x, y = get_batch(train_data, BATCH_SIZE, CONTEXT_LEN, device)
+        with amp.autocast(device_type='cuda', dtype=torch.float16):
+            logits, loss = model(x, y)
+            loss = loss / GRAD_ACCUM
+        scaler.scale(loss).backward()
+        loss_accum += loss.item()
+    # Gradient clipping (prevents exploding gradients)
+    scaler.unscale_(optimizer)
+    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+    scaler.step(optimizer)
+    scaler.update()
+    scheduler.step()
+    if step % 100 == 0:
+        print(f'Step {step} | Loss: {loss_accum:.4f} | LR: {scheduler.get_last_lr()[0]:.2e}')
+    if step % SAVE_EVERY == 0:
+        torch.save({'model': model.state_dict(), 'config': config,
+                    'step': step, 'optimizer': optimizer.state_dict()},
+                   f'checkpoints/arthasathi_step{step}.pt')
+4.3 Fine-Tuning for Financial Domain + Chat
+# finetune_arthasathi.py — Run AFTER pre-training
+# This is Supervised Fine-Tuning (SFT) on instruction-response pairs
+from transformers import get_linear_schedule_with_warmup
+# Load pre-trained checkpoint
+checkpoint = torch.load('checkpoints/arthasathi_pretrain_final.pt')
+model.load_state_dict(checkpoint['model'])
+# Fine-tuning hyperparameters (LOWER learning rate — don't destroy pre-training)
+FT_LR = 5e-5          # 6x lower than pre-training
+FT_STEPS = 20000      # Much fewer steps
+FT_BATCH = 4
+FT_GRAD_ACCUM = 32    # Effective batch 128
+# ChatML format — wrap conversations in special tokens
+CHAT_TEMPLATE = '''<|im_start|>system
+Tum ArthaSathi ho — ek dost jo financial help karta hai. Sada simple bhasha mein baat karo.
+User ki language mein jawab do (Hindi/Marathi/Tamil/etc).<|im_end|>
+<|im_start|>user
+{user_message}<|im_end|>
+<|im_start|>assistant
+{assistant_response}<|im_end|>'''
+# Fine-tuning loss only on assistant responses (not user messages)
+# This is standard instruction fine-tuning — teach model to respond, not to ask
+def compute_ft_loss(logits, targets, response_mask):
+    loss = F.cross_entropy(logits.view(-1, config.vocab_size), targets.view(-1), reduction='none')
+    loss = (loss * response_mask.view(-1)).sum() / response_mask.sum()
+    return loss
+# LoRA Fine-tuning option (saves VRAM — use if GPU < 16GB)
+# pip install peft
+from peft import LoraConfig, get_peft_model, TaskType
+lora_config = LoraConfig(
+    task_type=TaskType.CAUSAL_LM,
+    r=16,               # LoRA rank — higher = more params but better quality
+    lora_alpha=32,
+    target_modules=['Wq', 'Wk', 'Wv', 'Wo'],  # Apply LoRA to attention
+    lora_dropout=0.05
+)
+model = get_peft_model(model, lora_config)
+model.print_trainable_parameters()  # Should be ~0.5% of total params
+SECTION 5: RAG ENGINE — KNOWLEDGE + MEMORY
+5.1 What RAG Does for ArthaSathi
+RAG (Retrieval Augmented Generation) gives ArthaSathi access to up-to-date knowledge without retraining. When a user asks about current interest rates, specific GST rules, or a bank's hardship program, the RAG engine retrieves the relevant information from a vector database and injects it into the model's context. This prevents hallucination on factual financial queries — the single biggest risk in a financial AI product.
+RAG Knowledge Base Contents
+RBI circulars and interest rate policies. GST rules for informal sector (updated live). State-wise microfinance regulations. Bank-specific hardship program eligibility criteria. EMI calculator, debt avalanche/snowball formulas. Tax slabs, ITR filing rules for gig workers. Creditor negotiation scripts (template library).
+RAG Memory Layer (Per User)
+User's complete debt profile (loan amounts, rates, lenders). 90-day income and expense history (voice note transcriptions). Business transaction records for micro-entrepreneurs. Saved negotiation scripts and outcomes. Language preference and literacy level. Risk score and capacity-to-repay model.
+5.2 RAG Implementation Code
+# rag_engine.py — Complete RAG system for ArthaSathi
+import faiss
+import numpy as np
+from sentence_transformers import SentenceTransformer
+import json, sqlite3
+# Use multilingual sentence encoder for 9 Indian languages
+# 'paraphrase-multilingual-MiniLM-L12-v2' supports all our languages
+encoder = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+class ArthaSathiRAG:
+    def __init__(self, index_path='faiss_index', db_path='arthakb.db'):
+        # FAISS vector store for fast similarity search
+        self.index = faiss.IndexFlatIP(384)  # 384-dim embeddings
+        self.documents = []
+        self.db = sqlite3.connect(db_path)
+        self._init_db()
+    def _init_db(self):
+        self.db.execute('''CREATE TABLE IF NOT EXISTS user_memory (
+            user_id TEXT, key TEXT, value TEXT, updated_at TIMESTAMP,
+            PRIMARY KEY (user_id, key))''')
+        self.db.execute('''CREATE TABLE IF NOT EXISTS transactions (
+            user_id TEXT, type TEXT, amount REAL, description TEXT,
+            language TEXT, timestamp TIMESTAMP)''')
+        self.db.commit()
+    def add_knowledge(self, text, metadata):
+        embedding = encoder.encode([text])[0]
+        embedding = embedding / np.linalg.norm(embedding)  # Normalize
+        self.index.add(embedding.reshape(1, -1))
+        self.documents.append({'text': text, 'metadata': metadata})
+    def retrieve(self, query, k=5):
+        query_emb = encoder.encode([query])[0]
+        query_emb = query_emb / np.linalg.norm(query_emb)
+        scores, indices = self.index.search(query_emb.reshape(1,-1), k)
+        return [self.documents[i] for i in indices[0] if i < len(self.documents)]
+    def save_user_memory(self, user_id, key, value):
+        self.db.execute('INSERT OR REPLACE INTO user_memory VALUES (?,?,?,datetime("now"))',
+                        (user_id, key, json.dumps(value)))
+        self.db.commit()
+    def get_user_profile(self, user_id):
+        rows = self.db.execute('SELECT key, value FROM user_memory WHERE user_id=?',
+                                (user_id,)).fetchall()
+        return {k: json.loads(v) for k, v in rows}
+    def build_context(self, user_id, user_message):
+        # Retrieve relevant knowledge
+        docs = self.retrieve(user_message, k=3)
+        knowledge_context = '\n'.join([d['text'] for d in docs])
+        # Get user's financial profile
+        profile = self.get_user_profile(user_id)
+        # Build full context string injected into LLM prompt
+        return f'''[KNOWLEDGE]\n{knowledge_context}\n[USER PROFILE]\n{json.dumps(profile, ensure_ascii=False)}'''
+SECTION 6: VOICE NOTE PROCESSING — 9 INDIAN LANGUAGES
+6.1 WhatsApp Voice Note → Text → Response
+WhatsApp voice notes are the PRIMARY input method for ArthaSathi users. 80% of users in tier-2/3 cities and rural India prefer speaking over typing, especially in regional languages. This pipeline converts voice to text, processes it, and optionally returns audio.
+# voice_pipeline.py
+import whisper
+from gtts import gTTS
+import librosa, soundfile as sf
+import io
+# Fine-tuned Whisper for Indian languages
+# Base Whisper handles Hindi/Tamil well but struggles with Bhojpuri/Assamese
+# Fine-tune on: openslr.org (Indian language speech datasets)
+# Datasets: IIT Madras (Tamil), Mozilla Common Voice (Hindi, Marathi)
+model_whisper = whisper.load_model('small')  # Use 'medium' for better accuracy
+LANGUAGE_MAP = {
+    'hi': 'Hindi', 'mr': 'Marathi', 'ta': 'Tamil',
+    'kn': 'Kannada', 'bho': 'Bhojpuri', 'as': 'Assamese',
+    'bn': 'Bengali', 'te': 'Telugu', 'en': 'English'
+}
+def transcribe_voice_note(audio_bytes, detected_language=None):
+    # Convert WhatsApp OGG to WAV
+    audio = whisper.load_audio(io.BytesIO(audio_bytes))
+    # Detect language if not specified
+    if not detected_language:
+        result = model_whisper.detect_language(audio)
+        detected_language = result[0]
+    # Transcribe
+    result = model_whisper.transcribe(audio, language=detected_language, task='transcribe')
+    return result['text'], detected_language
+def text_to_speech_response(text, lang):
+    # gTTS supports Hindi, Marathi, Tamil, Telugu, Bengali, Kannada
+    # For Bhojpuri/Assamese: use Hindi TTS (closest available)
+    gtts_lang = {'bho': 'hi', 'as': 'bn'}.get(lang, lang)
+    tts = gTTS(text=text, lang=gtts_lang, slow=False)
+    audio_buffer = io.BytesIO()
+    tts.write_to_fp(audio_buffer)
+    return audio_buffer.getvalue()
+# Speech datasets for fine-tuning Whisper on Indian languages:
+# 1. OpenSLR.org: org/resources — Indian language datasets (53, 66, 103, 116, 117)
+# 2. Mozilla Common Voice: commonvoice.mozilla.org/en/datasets — Hindi, Marathi, Tamil
+# 3. AI4Bharat IndicSUPERB: speech benchmark for 12 Indian languages
+# 4. MUCS 2021: multilingual and code-switching speech for Indian languages
+SECTION 7: WHATSAPP + SMS INTEGRATION
+7.1 WhatsApp Business API Setup
+# whatsapp_handler.py
+from fastapi import FastAPI, Request
+from twilio.rest import Client  # pip install twilio
+import httpx
+app = FastAPI()
+# Option 1: WhatsApp via Twilio (easiest to start)
+# $0.005/message, free 1000 messages/month for testing
+TWILIO_SID = 'your_account_sid'
+TWILIO_TOKEN = 'your_auth_token'
+TWILIO_WA_NUMBER = 'whatsapp:+14155238886'
+client = Client(TWILIO_SID, TWILIO_TOKEN)
+# Option 2: WhatsApp Cloud API (Meta) — FREE, higher limits, requires business verification
+WA_API_URL = 'https://graph.facebook.com/v18.0/{phone_id}/messages'
+WA_TOKEN = 'your_meta_access_token'
+@app.post('/webhook')
+async def receive_message(request: Request):
+    data = await request.json()
+    # Parse incoming message
+    message = data['entry'][0]['changes'][0]['value']['messages'][0]
+    user_id = message['from']
+    msg_type = message['type']
+    if msg_type == 'text':
+        user_text = message['text']['body']
+        response = await process_text_message(user_id, user_text)
+    elif msg_type == 'audio':
+        audio_id = message['audio']['id']
+        audio_bytes = await download_wa_media(audio_id)
+        transcription, lang = transcribe_voice_note(audio_bytes)
+        response = await process_text_message(user_id, transcription, detected_lang=lang)
+    await send_wa_message(user_id, response)
+    return {'status': 'ok'}
+async def process_text_message(user_id, text, detected_lang=None):
+    # 1. Detect language
+    lang = detected_lang or detect_language(text)
+    # 2. Get user profile from DB
+    user_profile = rag.get_user_profile(user_id)
+    # 3. Retrieve relevant knowledge
+    context = rag.build_context(user_id, text)
+    # 4. Generate response with ArthaSathi LLM
+    response = await generate_response(text, context, lang, user_profile)
+    # 5. Update user memory
+    await update_user_memory(user_id, text, response)
+    return response
+# SMS fallback for feature phones (no WhatsApp)
+@app.post('/sms')
+async def receive_sms(request: Request):
+    form = await request.form()
+    user_id = form['From']
+    text = form['Body']
+    response = await process_text_message(user_id, text)
+    # Truncate to 160 chars for SMS, send in parts if longer
+    return send_sms_response(user_id, response[:1000])
+SECTION 8: FINANCIAL INTELLIGENCE ENGINES
+8.1 Debt Engine — Payoff Calculator + Negotiation
+# debt_engine.py
+from dataclasses import dataclass
+from typing import List
+import json
+@dataclass
+class Debt:
+    name: str         # 'HDFC Credit Card', 'Moneylender Ramesh'
+    principal: float  # Outstanding amount
+    interest_rate: float  # Annual percentage
+    min_payment: float    # Minimum monthly payment
+    lender_type: str  # 'bank', 'nbfc', 'moneylender', 'medical', 'payday'
+class DebtEngine:
+    def avalanche_order(self, debts: List[Debt]):
+        """Pay minimum on all, throw extra money at highest interest first"""
+        return sorted(debts, key=lambda d: d.interest_rate, reverse=True)
+    def snowball_order(self, debts: List[Debt]):
+        """Pay minimum on all, throw extra money at smallest balance first (psychological wins)"""
+        return sorted(debts, key=lambda d: d.principal)
+    def months_to_payoff(self, principal, annual_rate, monthly_payment):
+        """How many months to pay off this debt at this payment amount"""
+        if monthly_payment <= 0: return float('inf')
+        monthly_rate = annual_rate / 12 / 100
+        if monthly_rate == 0: return principal / monthly_payment
+        import math
+        n = -math.log(1 - (monthly_rate * principal / monthly_payment)) / math.log(1 + monthly_rate)
+        return max(0, n)
+    def total_interest_paid(self, principal, annual_rate, months):
+        monthly_rate = annual_rate / 12 / 100
+        total = principal * (1 + monthly_rate) ** months
+        return total - principal
+    def generate_negotiation_script(self, debt: Debt, user_income: float, language: str):
+        """Generate actual script for user to call/message creditor"""
+        hardship_ratio = debt.min_payment / user_income
+        if hardship_ratio > 0.4:  # Paying >40% of income on one debt = genuine hardship
+            situation = 'severe hardship'
+        elif hardship_ratio > 0.25:
+            situation = 'moderate hardship'
+        else:
+            situation = 'standard negotiation'
+        # Return to LLM as context to generate language-specific script
+        return {
+            'debt': debt.name,
+            'lender_type': debt.lender_type,
+            'situation': situation,
+            'suggested_asks': ['interest rate reduction', 'EMI restructuring', 'moratorium period'],
+            'legal_options': self.get_legal_options(debt.lender_type),
+            'generate_in_language': language
+        }
+    def get_legal_options(self, lender_type):
+        options = {
+            'bank': ['RBI Ombudsman complaint', 'DRT (Debt Recovery Tribunal)', 'IBC Section 8 notice'],
+            'nbfc': ['RBI NBFC regulation complaint', 'consumer court'],
+            'moneylender': ['State Moneylenders Act', 'police complaint for usurious rates'],
+            'medical': ['hospital financial assistance program', 'state health scheme'],
+            'payday': ['RBI digital lending guidelines', 'Fair Practices Code complaint']
+        }
+        return options.get(lender_type, ['consumer court', 'legal aid'])
+8.2 Micro-Business Engine — Pricing + GST + Microloan
+# business_engine.py
+class MicroBusinessEngine:
+    def suggest_price(self, cost_of_goods, operating_expenses, target_profit_margin,
+                      market_competition_level, business_type):
+        """Suggest pricing for informal business owners"""
+        total_cost = cost_of_goods + operating_expenses
+        # Adjust margin by competition
+        margin_adjustments = {'low': 1.3, 'medium': 1.2, 'high': 1.1}
+        suggested_price = total_cost * margin_adjustments.get(market_competition_level, 1.2)
+        return {
+            'min_price': total_cost * 1.05,  # Break-even + 5%
+            'suggested_price': suggested_price,
+            'target_price': total_cost * (1 + target_profit_margin/100),
+            'explanation': 'This is calculated based on your costs...'  # LLM fills this
+        }
+    def gst_check(self, annual_turnover):
+        """GST registration decision for informal businesses"""
+        if annual_turnover < 2000000:  # 20 lakh
+            return 'NOT required. You are below GST threshold.',  False
+        elif annual_turnover < 4000000:  # 40 lakh (goods)
+            return 'OPTIONAL composition scheme (1% rate).', 'optional'
+        else:
+            return 'MANDATORY GST registration required.', True
+    def build_credit_profile(self, transactions, months=6):
+        """Build digital financial history from voice note transactions"""
+        if not transactions: return None
+        monthly_income = sum(t['amount'] for t in transactions if t['type']=='income') / months
+        monthly_expense = sum(t['amount'] for t in transactions if t['type']=='expense') / months
+        net_cash_flow = monthly_income - monthly_expense
+        income_regularity = self._calculate_regularity(transactions)
+        return {
+            'avg_monthly_income': monthly_income,
+            'avg_monthly_expense': monthly_expense,
+            'net_cash_flow': net_cash_flow,
+            'income_regularity_score': income_regularity,  # 0-100
+            'creditworthy': net_cash_flow > 0 and income_regularity > 60,
+            'max_loan_amount': net_cash_flow * 6 if net_cash_flow > 0 else 0
+        }
+    def generate_itinerary(self, voice_note_text, lang):
+        """Parse voice note transaction into structured data"""
+        # User says: 'Aaj 500 ki sabzi bichi, 200 kharcha hua dukan ka'
+        # Returns: [{type:'income',amount:500,desc:'sabzi ki bikri'},{type:'expense',amount:200,desc:'dukan kharcha'}]
+        # This function extracts amounts and labels from natural language
+        pass  # ArthaSathi LLM fills this via structured output
+SECTION 9: TRAINING SCHEDULE ON COLAB + YOUR PC
+9.1 Realistic Training Timeline
+Phase
+What You Do
+Hardware + Time
+Phase 1: Tokenizer Training
+Run BPE tokenizer on 10GB text sample (1.1GB per language)
+Your PC CPU — 4-8 hours
+Phase 2: Pre-training Stage 1
+Train 117M param model on 5B tokens — proof of concept
+Colab T4 (free) — 72 hours (split over 3 sessions)
+Phase 3: Pre-training Stage 2
+Train 345M param model on 15B tokens — main model
+Colab A100 ($10-15 credit) — 120 hours total
+Phase 4: Instruction Fine-tuning
+Fine-tune on 2M financial instruction pairs (LoRA)
+Colab A100 — 20 hours
+Phase 5: Chat Fine-tuning
+Fine-tune on 500K conversations (ChatML format)
+Colab A100 — 10 hours
+Phase 6: RAG Setup
+Build FAISS index from financial documents, load knowledge base
+Your PC — 2-4 hours
+Phase 7: Integration Testing
+Connect LLM + RAG + WhatsApp API, test 100 conversations in all 9 languages
+Your PC — 1 week
+Phase 8: Evaluation
+Perplexity, BLEU score, human evaluation by native speakers
+Your PC + volunteer evaluators — 2 weeks
+9.2 Colab Setup Script
+# colab_setup.ipynb — Run this at the start of every Colab session
+# 1. Mount Google Drive (to save checkpoints persistently)
+from google.colab import drive
+drive.mount('/content/drive')
+# 2. Check GPU
+!nvidia-smi  # Verify A100/T4/V100
+# 3. Install dependencies
+!pip install -q torch transformers tokenizers datasets sentencepiece
+!pip install -q faiss-gpu peft accelerate bitsandbytes
+!pip install -q openai-whisper gtts librosa soundfile
+!pip install -q fastapi uvicorn twilio PyMuPDF
+# 4. Load latest checkpoint from Drive
+import shutil
+shutil.copytree('/content/drive/MyDrive/arthasathi_checkpoints/',
+               '/content/checkpoints/')
+# 5. Resume training from last checkpoint
+checkpoint = torch.load('/content/checkpoints/latest.pt')
+model.load_state_dict(checkpoint['model'])
+optimizer.load_state_dict(checkpoint['optimizer'])
+start_step = checkpoint['step']
+print(f'Resuming from step {start_step}')
+# 6. Auto-save to Drive every 30 min (Colab disconnects after 12h)
+import threading, time
+def auto_save():
+    while True:
+        time.sleep(1800)  # 30 minutes
+        shutil.copytree('/content/checkpoints/',
+                       '/content/drive/MyDrive/arthasathi_checkpoints/', dirs_exist_ok=True)
+        print('Auto-saved to Drive')
+threading.Thread(target=auto_save, daemon=True).start()
+SECTION 10: EVALUATION & QUALITY METRICS
+10.1 How to Know Your Model is Good
+Metric
+Target Value
+How to Measure
+Perplexity (Language Quality)
+< 15 on held-out Indian financial text (lower = better)
+Evaluate on 1% held-out data after each epoch
+Financial Accuracy
+> 90% on debt calculation tests
+Create 500 test cases with verified answers
+Language Coverage
+Native speaker rating > 4/5 in each of 9 languages
+Recruit 5 native speakers per language for evaluation
+Code-Switching Quality
+Natural handling of Hindi-English mixing in > 80% of cases
+Test 200 code-switched sentences per language pair
+Safety: No Harmful Advice
+Zero instances of advice to take high-interest loans, ignore legal rights
+Red team with 100 adversarial prompts
+Hallucination Rate
+< 5% on factual financial questions (GST rates, RBI rules)
+Compare against ground truth RBI/GST documents
+SECTION 11: DEPLOYMENT — STARTUP TO ENTERPRISE
+11.1 Three Deployment Stages
+PHASE
+1
+MVP — 1,000 Users
+Single server, WhatsApp Twilio, all on your PC
+# Deploy locally with ngrok tunnel for WhatsApp webhook
+pip install uvicorn ngrok
+# Terminal 1: Start FastAPI server
+uvicorn main:app --host 0.0.0.0 --port 8000
+# Terminal 2: Expose to internet for WhatsApp webhook
+ngrok http 8000
+# Copy ngrok URL to WhatsApp Business API webhook settings
+# Model serving with quantization (reduces memory 4x)
+# Use bitsandbytes 4-bit quantization — model fits in 6GB VRAM
+from transformers import BitsAndBytesConfig
+quantization_config = BitsAndBytesConfig(load_in_4bit=True,
+    bnb_4bit_compute_dtype=torch.float16)
+PHASE
+2
+Scale — 100,000 Users
+Cloud deployment, load balancing, database
+# Docker deployment
+# Dockerfile
+FROM pytorch/pytorch:2.1.0-cuda11.8-cudnn8-runtime
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+EXPOSE 8000
+CMD ['uvicorn', 'main:app', '--host', '0.0.0.0', '--port', '8000', '--workers', '4']
+# Deploy on: AWS (g4dn.xlarge = $0.52/hr, 1 GPU T4)
+# Or: GCP (n1-standard-4 + T4 GPU = $0.55/hr)
+# Or: Azure NC6s_v3
+# Switch from SQLite to PostgreSQL for user data at scale
+# Use Redis for session caching (fast user profile retrieval)
+# Use FAISS-GPU for faster retrieval at 100K+ users
+PHASE
+3
+Enterprise — 10M+ Users
+Multi-region, model distillation, edge deployment
+# Model distillation: compress 345M model to 80M for edge deployment
+# Users in rural India have phones with 2-4GB RAM
+# 80M param model can run locally on device — zero API cost, works offline!
+# Knowledge distillation training
+def distillation_loss(student_logits, teacher_logits, true_labels, temperature=4.0):
+    soft_teacher = F.softmax(teacher_logits / temperature, dim=-1)
+    soft_student = F.log_softmax(student_logits / temperature, dim=-1)
+    kd_loss = F.kl_div(soft_student, soft_teacher, reduction='batchmean') * (temperature ** 2)
+    ce_loss = F.cross_entropy(student_logits, true_labels)
+    return 0.7 * kd_loss + 0.3 * ce_loss
+# Export to ONNX for Android/iOS deployment
+torch.onnx.export(model_small, dummy_input, 'arthasathi_mobile.onnx',
+                  opset_version=14, dynamic_axes={'input': {0: 'batch', 1: 'seq'}})
+# Convert to TensorFlow Lite for Android
+# Final mobile model: ~300MB, runs inference in <2 seconds on mid-range phone
+SECTION 12: COMPLETE FILE STRUCTURE
+arthasathi/
+├── data/
+│   ├── download_datasets.py        # Download all 14 open-source datasets
+│   ├── clean_pipeline.py           # Clean, deduplicate, filter all data
+│   ├── synthetic_generator.py      # Generate 2M synthetic conversations
+│   ├── tokenizer_train.py          # Train custom 60K BPE tokenizer
+│   └── format_dataset.py           # Convert to pretrain/finetune/chat formats
+├── model/
+│   ├── arthasathi_model.py         # Full LLM architecture from scratch
+│   ├── train_pretrain.py           # Pre-training script
+│   ├── train_finetune.py           # Instruction + chat fine-tuning
+│   ├── train_distill.py            # Knowledge distillation for mobile
+│   └── evaluate.py                 # Perplexity, accuracy, safety metrics
+├── rag/
+│   ├── rag_engine.py               # FAISS vector store + retrieval
+│   ├── knowledge_base/
+│   │   ├── rbi_circulars.jsonl     # RBI financial regulations
+│   │   ├── gst_rules.jsonl         # GST rules for informal sector
+│   │   ├── negotiation_scripts.jsonl # Creditor negotiation templates
+│   │   └── tax_guidance.jsonl      # ITR-1, ITR-4 guidance
+│   └── build_index.py              # Build FAISS index from knowledge base
+├── engines/
+│   ├── debt_engine.py              # Debt calculations, avalanche/snowball
+│   ├── business_engine.py          # Pricing, GST, credit profile
+│   └── financial_tools.py          # EMI calc, compound interest, loan payoff
+├── voice/
+│   ├── voice_pipeline.py           # Voice note → text → audio response
+│   └── finetune_whisper.py         # Fine-tune Whisper for Indian languages
+├── api/
+│   ├── main.py                     # FastAPI main app
+│   ├── whatsapp_handler.py         # WhatsApp webhook processing
+│   ├── sms_handler.py              # SMS fallback
+│   └── user_memory.py              # User profile and transaction storage
+├── deployment/
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── kubernetes/                 # K8s configs for enterprise scale
+├── notebooks/
+│   ├── colab_pretrain.ipynb        # Colab notebook for pre-training
+│   ├── colab_finetune.ipynb        # Colab notebook for fine-tuning
+│   └── evaluation.ipynb            # Model evaluation notebook
+├── requirements.txt
+└── README.md
+SECTION 13: BUSINESS MODEL & ROADMAP
+Revenue Stream 1 — Microloan Origination Fee
+When ArthaSathi builds a digital financial history for a micro-entrepreneur and connects them to an NBFC or bank for a microloan, the platform earns 0.5-1.5% origination fee. At 1M loans/year at avg Rs 50,000, this is Rs 250-750 crore annually.
+Revenue Stream 2 — B2B Health & Finance Ministry Contracts
+Government of India and state governments pay per-user licensing for welfare program financial literacy. NABARD, SIDBI, and state rural livelihood missions are ready buyers. Target: 5-year Rs 200 crore government contract.
+Revenue Stream 3 — Bank Integration API
+Banks and NBFCs pay API access fees to use ArthaSathi's credit profiling engine. Converts their cost of acquiring informal sector customers from Rs 2000 to Rs 200. Price: Rs 50-100/user/year.
+Revenue Stream 4 — Premium Features
+Free tier: basic debt tracking, voice notes, language support. Premium (Rs 99/month): full debt negotiation scripts, tax filing assistance, business credit profile certificate. Target: 5% conversion of 10M free users.
+12-Month Milestones
+Month 1-2: Complete tokenizer training + clean 50GB corpus. All datasets downloaded and processed.
+Month 3-4: Pre-train 117M model. Validate language quality in all 9 languages. Hire 2 native speaker evaluators per language.
+Month 5-6: Fine-tune on financial domain. Build debt engine + business engine. Deploy WhatsApp MVP for 100 test users.
+Month 7-8: Generate 2M synthetic conversations. Run chat fine-tuning. Launch public beta with 10,000 users.
+Month 9-10: Scale to 100K users. Close first B2B contract (NBFC or government). Train 345M full model.
+Month 11-12: Series A fundraise. Launch enterprise API. Begin mobile distillation for offline deployment.
+ArthaSathi: The LLM India Built for India
+700M users. 9 languages. One financial companion. Built from scratch. Owned forever.

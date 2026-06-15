@@ -10,7 +10,7 @@ Supports: Hindi, English, Marathi, Tamil, Kannada, Bhojpuri,
 
 import os, io, json, tempfile, subprocess
 from pathlib import Path
-from typing import Optional, Tuple, Dict
+from typing import Optional, Tuple, Dict, List
 
 
 # ─────────────────────────────────────────────────────────────

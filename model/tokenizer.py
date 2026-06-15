@@ -89,7 +89,7 @@ def train_arthasathi_tokenizer(
         continuing_subword_prefix="##",
     )
 
-    print(f"Training BPE tokenizer on {len(data_files)} files  →  vocab_size={vocab_size}")
+    print(f"Training BPE tokenizer on {len(data_files)} files -> vocab_size={vocab_size}")
     tokenizer.train(data_files, trainer)
 
     # ── Post-processor: adds [BOS] and [EOS] automatically ───
@@ -141,11 +141,16 @@ def _verify_tokenizer(tokenizer):
         ("Telugu",   "నా అప్పు 50000 రూపాయలు. ఎలా తీర్చాలి?"),
         ("Code-mix", "bhai mera 12000 ka loan hai aur 8000 salary hai"),
     ]
-    print("\n─── Tokenizer Quality Check ───")
+    print("\n=== Tokenizer Quality Check ===")
     for lang, text in test_cases:
         enc = tokenizer.encode(text)
-        print(f"  {lang:10s}: {len(enc.tokens):3d} tokens  | {enc.tokens[:8]}...")
-    print("─────────────────────────────────")
+        try:
+            print(f"  {lang:10s}: {len(enc.tokens):3d} tokens  | {enc.tokens[:8]}...")
+        except UnicodeEncodeError:
+            # Safe print for consoles that do not support Indian language characters
+            token_reprs = [t.encode('ascii', 'backslashreplace').decode('ascii') for t in enc.tokens[:8]]
+            print(f"  {lang:10s}: {len(enc.tokens):3d} tokens  | {token_reprs}...")
+    print("================================")
 
 
 # ─────────────────────────────────────────────────────────────

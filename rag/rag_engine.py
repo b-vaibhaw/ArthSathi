@@ -110,7 +110,7 @@ class FAISSVectorStore:
             faiss.write_index(self.index, str(Path(path) / "faiss.index"))
         with open(Path(path) / "docs.json", "w", encoding="utf-8") as f:
             json.dump(self.documents, f, ensure_ascii=False)
-        print(f"[RAG] Saved {len(self.documents)} docs → {path}/")
+        print(f"[RAG] Saved {len(self.documents)} docs -> {path}/")
 
     def load(self, path: str):
         try:
@@ -386,6 +386,7 @@ class UserMemory:
         return dict(row)
 
     def update_user(self, user_id: str, **kwargs):
+        self.get_or_create_user(user_id)
         allowed = {"language", "monthly_income", "literacy_level", "channel"}
         updates = {k: v for k, v in kwargs.items() if k in allowed}
         if not updates:
@@ -401,6 +402,7 @@ class UserMemory:
 
     def add_debt(self, user_id: str, name: str, principal: float,
                  annual_rate: float, min_payment: float, lender_type: str = "bank"):
+        self.get_or_create_user(user_id)
         self.db.execute(
             "INSERT INTO debts (user_id,name,principal,annual_rate,min_payment,lender_type) "
             "VALUES (?,?,?,?,?,?)",
@@ -423,6 +425,7 @@ class UserMemory:
     def add_transaction(self, user_id: str, txn_type: str, amount: float,
                         category: str = "other", description: str = "",
                         date_str: str = "", lang: str = "hi"):
+        self.get_or_create_user(user_id)
         if not date_str:
             date_str = str(date.today())
         self.db.execute(
@@ -497,6 +500,7 @@ class UserMemory:
         debts = self.get_debts(user_id)
         summary = self.get_monthly_summary(user_id)
         history = self.get_history(user_id, last_n=6)
+        transactions = self.get_transactions(user_id)
         total_debt     = sum(d["principal"] for d in debts)
         total_min_emi  = sum(d["min_payment"] for d in debts)
         monthly_income = user.get("monthly_income") or summary["avg_monthly_income"]
@@ -509,6 +513,7 @@ class UserMemory:
             "total_emi":     round(total_min_emi, 2),
             "txn_summary":   summary,
             "recent_history": history,
+            "transactions":  [dict(t) for t in transactions],
             "debt_to_income": round(total_min_emi / max(monthly_income, 1) * 100, 1),
         }
 
