@@ -1,58 +1,30 @@
-# ArthaSathi LLM — Python Dependencies
+# ArthaSathi Platform — Python Dependencies
 # Install: pip install -r requirements.txt
-
-# ── Core PyTorch ────────────────────────────────────────────
-torch>=2.1.0
-torchvision>=0.16.0
-torchaudio>=2.1.0
-
-# ── HuggingFace Ecosystem ───────────────────────────────────
-transformers>=4.35.0
-tokenizers>=0.15.0
-datasets>=2.14.0
-accelerate>=0.24.0
-peft>=0.6.0                          # LoRA fine-tuning
-
-# ── Quantization ────────────────────────────────────────────
-bitsandbytes>=0.41.0                 # INT8 / 4-bit quantization
-
-# ── RAG / Vector Search ─────────────────────────────────────
-faiss-cpu>=1.7.4                     # Use faiss-gpu if NVIDIA GPU
-sentence-transformers>=2.2.2         # Multilingual embeddings
+#
+# This platform is designed to run on a FREE, self-hosted, open-weight LLM
+# via Ollama (https://ollama.com) — no paid API keys needed. Everything in
+# this file is free/open-source.
 
 # ── API Server ───────────────────────────────────────────────
-fastapi>=0.104.0
-uvicorn[standard]>=0.24.0
-pydantic>=2.4.0
-httpx>=0.25.0
-python-multipart>=0.0.6              # Form data handling
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.6.0
+python-multipart>=0.0.9
 
-# ── Voice / Audio ────────────────────────────────────────────
-openai-whisper>=20231117             # Speech-to-text
-gtts>=2.4.0                          # Google Text-to-Speech
-librosa>=0.10.0                      # Audio processing
-soundfile>=0.12.0
-ffmpeg-python>=0.2.0
+# ── LLM client (talks to local Ollama server) ───────────────
+requests>=2.31.0
 
-# ── SMS ─────────────────────────────────────────────────────
-twilio>=8.10.0                       # SMS sending
+# ── RAG / Semantic search (optional — graceful fallback to keyword search) ──
+# Uncomment for better multilingual retrieval quality:
+# sentence-transformers>=2.7.0
+# faiss-cpu>=1.8.0
 
-# ── Data Processing ─────────────────────────────────────────
-numpy>=1.24.0
-pandas>=2.0.0
-ftfy>=6.1.1                          # Unicode text fixing
-langdetect>=1.0.9                    # Language detection
-PyMuPDF>=1.23.0                      # PDF extraction (RBI/SEBI docs)
-beautifulsoup4>=4.12.0               # HTML parsing
-lxml>=4.9.0
-
-# ── ML Evaluation ───────────────────────────────────────────
-sacrebleu>=2.3.1                     # BLEU score
-jiwer>=3.0.3                         # WER for ASR evaluation
-evaluate>=0.4.1                      # HuggingFace evaluation library
+# ── Financial news / market data (optional — graceful fallback if absent) ──
+# feedparser>=6.0.11       # RSS financial news feeds
+# yfinance>=0.2.40         # Free stock/market quotes, no API key needed
 
 # ── Utilities ────────────────────────────────────────────────
-tqdm>=4.66.0
-rich>=13.6.0                         # Pretty terminal output
-python-dotenv>=1.0.0                 # .env file loading
-watchfiles>=0.21.0                   # File watching for dev server
+python-dotenv>=1.0.1
+
+# ── Testing ──────────────────────────────────────────────────
+pytest>=8.0.0

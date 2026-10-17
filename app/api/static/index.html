@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ArthaSathi — Your Financial Companion</title>
+<link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">अ</span>
+        <div>
+          <div class="brand-title">ArthaSathi</div>
+          <div class="brand-sub">Independent AI financial companion — runs on a free, self-hosted model</div>
+        </div>
+      </div>
+      <button id="toggle-profile" class="ghost-btn">Profile &amp; Tools</button>
+    </header>
+
+    <main class="layout">
+      <section class="chat-panel">
+        <div id="messages" class="messages"></div>
+        <form id="chat-form" class="composer">
+          <input id="chat-input" type="text" autocomplete="off"
+                 placeholder="Ask about debt, EMI, GST, SIP, a stock, financial news…" />
+          <button type="submit">Send</button>
+        </form>
+      </section>
+
+      <aside id="profile-panel" class="profile-panel">
+        <h3>Your Profile</h3>
+        <label>Monthly income (₹)</label>
+        <div class="row">
+          <input id="income-input" type="number" placeholder="e.g. 25000" />
+          <button id="save-income">Save</button>
+        </div>
+
+        <h4>Debts</h4>
+        <div id="debt-list" class="debt-list"></div>
+        <details>
+          <summary>+ Add a debt</summary>
+          <div class="debt-form">
+            <input id="debt-name" placeholder="Name (e.g. HDFC Credit Card)" />
+            <input id="debt-principal" type="number" placeholder="Outstanding amount" />
+            <input id="debt-rate" type="number" placeholder="Annual interest rate %" />
+            <input id="debt-min" type="number" placeholder="Min monthly payment" />
+            <select id="debt-lender">
+              <option value="bank">Bank</option>
+              <option value="nbfc">NBFC</option>
+              <option value="moneylender">Moneylender</option>
+              <option value="medical">Medical</option>
+              <option value="payday">Payday loan</option>
+              <option value="friend">Friend/Family</option>
+            </select>
+            <button id="add-debt">Add debt</button>
+          </div>
+        </details>
+
+        <h4>Available tools</h4>
+        <ul id="tool-list" class="tool-list"></ul>
+
+        <div class="user-id-row">
+          <label>Session id</label>
+          <input id="user-id" readonly />
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
